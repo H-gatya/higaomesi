@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>東大宮グルメガチャ</title>
+  <style>
+    /* ── tokens ── */
+    :root {
+      --bg:        #fdf6ee;
+      --surface:   #ffffff;
+      --border:    #e8ddd0;
+      --accent:    #d45f2e;
+      --accent-dk: #b04a1f;
+      --text:      #2a1f14;
+      --muted:     #8a7060;
+      --chip-bg:   #f5ede3;
+      --chip-on:   #d45f2e;
+      --radius-lg: 20px;
+      --radius-md: 12px;
+      --shadow:    0 4px 24px rgba(80,40,10,0.10);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 60px;
+    }
+
+    /* ── header ── */
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .logo-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      padding: 4px 12px;
+      border-radius: 99px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-size: clamp(26px, 6vw, 40px);
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* ── card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* ── genre filter ── */
+    .filter-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .genre-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .chip-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--chip-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 99px;
+      padding: 6px 14px;
+      font-size: 13px;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+    .chip-label input[type="checkbox"] {
+      display: none;
+    }
+    .chip-label.checked {
+      background: var(--chip-on);
+      border-color: var(--chip-on);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    /* ── button ── */
+    .gacha-btn {
+      width: 100%;
+      padding: 18px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 900;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      transition: background 0.15s, transform 0.1s;
+      position: relative;
+      overflow: hidden;
+    }
+    .gacha-btn:hover  { background: var(--accent-dk); }
+    .gacha-btn:active { transform: scale(0.98); }
+    .gacha-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── result ── */
+    .result-area {
+      margin-top: 24px;
+      min-height: 60px;
+    }
+
+    /* empty / error state */
+    .result-empty {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      padding: 16px 0;
+    }
+
+    /* result card */
+    .result-shop {
+      border-top: 2px solid var(--border);
+      padding-top: 24px;
+      text-align: center;
+      animation: fadeUp 0.35s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .result-genre-badge {
+      display: inline-block;
+      background: var(--chip-bg);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 12px;
+      border-radius: 99px;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+    .result-name {
+      font-size: clamp(22px, 5vw, 30px);
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 20px;
+    }
+    .result-link {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 11px 24px;
+      border-radius: var(--radius-md);
+      letter-spacing: 0.04em;
+      transition: background 0.15s;
+    }
+    .result-link:hover { background: var(--accent-dk); }
+
+    /* ── footer note ── */
+    .note {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 28px;
+      max-width: 420px;
+      line-height: 1.6;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .result-shop { animation: none; }
+    }
+
+    /* ── shop list ── */
+    .list-toggle-btn {
+      width: 100%;
+      max-width: 420px;
+      margin-top: 16px;
+      padding: 13px;
+      background: transparent;
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 700;
+      border: 2px solid var(--accent);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.15s, color 0.15s;
+    }
+    .list-toggle-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    #shopList {
+      width: 100%;
+      max-width: 420px;
+      margin-top: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 20px 24px;
+      text-align: left;
+    }
+    #shopList h3 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .shop-item {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .shop-item:last-child { border-bottom: none; }
+    .shop-item strong { color: var(--text); }
+    .shop-item .genre-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--chip-bg);
+      padding: 1px 8px;
+      border-radius: 99px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .shop-item a {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      background: none;
+      padding: 0;
+      border-radius: 0;
+    }
+    .shop-item a:hover { text-decoration: underline; }
+
+    /* ── external links section ── */
+    .ext-links {
+      width: 100%;
+      max-width: 420px;
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .ext-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 15px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .ext-btn:active { transform: scale(0.98); }
+    .ext-btn:hover  { opacity: 0.88; }
+    .ext-btn-ranking {
+      background: #2c5f9e;
+      color: #fff;
+    }
+    .ext-btn-review {
+      background: #27a060;
+      color: #fff;
+    }
+    .ext-btn-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+    .ext-btn-text { line-height: 1.3; text-align: left; }
+    .ext-btn-text small {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      opacity: 0.85;
+      margin-top: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-badge">Higashi-Omiya</div>
+    <h1>東大宮<br>グルメガチャ</h1>
+    <p class="subtitle">今日のランチ・ディナーをガチャで決めよう</p>
+  </header>
+
+  <div class="card">
+    <div class="filter-label">ジャンルを選ぶ</div>
+    <div class="genre-chips" id="genreChips">
+      <!-- JS で生成 -->
+    </div>
+
+    <button class="gacha-btn" id="gachaBtn" onclick="spin()">
+      ガチャを回す 🎰
+    </button>
+
+    <div class="result-area" id="result">
+      <p class="result-empty">上のボタンを押してお店を決めよう！</p>
+    </div>
+  </div>
+
+
+  <div class="ext-links">
+    <a class="ext-btn ext-btn-ranking"
+       href="./ranking.html"
+       target="_blank" rel="noopener">
+      <span class="ext-btn-icon">🏆</span>
+      <span class="ext-btn-text">
+        みんなの人気ランキングを見る<br>
+        <small>Coming soon</small>
+        <!--
+        <small>ランキングサイトへ移動します</small>
+        -->
+      </span>
+    </a>
+    <a class="ext-btn ext-btn-review"
+       href="https://docs.google.com/forms/d/e/1FAIpQLSefKMQXN9j1wlm4umBPahQE_4LSPQOLNRUbEqxdlFnr-o3wtQ/viewform"
+       target="_blank" rel="noopener">
+      <span class="ext-btn-icon">✍️</span>
+      <span class="ext-btn-text">
+        お店を評価する
+        <small>Google フォームで投票できます</small>
+      </span>
+    </a>
+  </div>
+  <!--
+  <p class="note">
+    ※ 店舗情報は <code>shops.json</code> で管理しています。<br>
+    お店の追加・修正は JSON ファイルを編集してください。
+  </p>
+  -->
+
+  <script>
+    const allShops = [
+
+    {
+      name: "一條苑",
+      genre: "焼肉",
+      info: "https://h-omiya.com/archives/shop/ichijoen"
+    },
+
+    {
+      name: "らーめんランド壱番館",
+      genre: "ラーメン",
+      info: "https://h-omiya.com/archives/shop/ichibankan"
+    },
+
+    {
+      name: "そば処 大菊",
+      genre: "そば",
+      info: "https://h-omiya.com/archives/shop/ogiku"
+    },
+
+    {
+      name: "玄海寿司",
+      genre: "寿司",
+      info: "https://h-omiya.com/archives/shop/genkaizushi"
+    },
+
+    {
+      name: "インド料理 DURGA",
+      genre: "カレー",
+      info: "https://h-omiya.com/archives/shop/durga"
+    },
+
+    {
+      name: "そば処 巴屋",
+      genre: "そば",
+      info: "https://h-omiya.com/archives/shop/tomoeya"
+    },
+
+    {
+      name: "からあげ専門店 鶏笑 東大宮店",
+      genre: "定食",
+      info: "https://h-omiya.com/archives/shop/torisho"
+    },
+
+    {
+      name: "やきとりや NOKAOI",
+      genre: "居酒屋",
+      info: "https://h-omiya.com/archives/shop/nokaoi"
+    },
+
+    {
+      name: "まどいびより 円居日和",
+      genre: "居酒屋",
+      info: "https://h-omiya.com/archives/shop/madoibiyori"
+    },
+
+    {
+  name: "狼煙 東大宮店",
+  genre: "ラーメン",
+  info: "#"
+},
+
+{
+  name: "ぼすや",
+  genre: "ラーメン",
+  info: "#"
+},
+
+{
+  name: "屋台ラーメン 北国",
+  genre: "ラーメン",
+  info: "#"
+},
+
+{
+  name: "麺家 光",
+  genre: "ラーメン",
+  info: "#"
+},
+
+{
+  name: "らーめんまこ",
+  genre: "ラーメン",
+  info: "#"
+},
+
+{
+  name: "一彩",
+  genre: "ラーメン",
+  info: "#"
+},
+
+{
+  name: "中華そば 弌",
+  genre: "ラーメン",
+  info: "#"
+},
+
+{
+  name: "大島飯店",
+  genre: "定食",
+  info: "#"
+},
+
+{
+  name: "食堂シノノメ",
+  genre: "定食",
+  info: "#"
+},
+
+{
+  name: "さじや",
+  genre: "定食",
+  info: "#"
+},
+
+{
+  name: "中華笑月",
+  genre: "定食",
+  info: "#"
+},
+
+{
+  name: "まんまんや",
+  genre: "定食",
+  info: "#"
+},
+
+{
+  name: "とん次",
+  genre: "定食",
+  info: "#"
+},
+
+{
+  name: "とんでん　東大宮店",
+  genre: "定食",
+  info: "#"
+},
+
+{
+  name: "更科",
+  genre: "そば",
+  info: "#"
+},
+
+{
+  name: "あさま",
+  genre: "そば",
+  info: "#"
+},
+
+{
+  name: "そば処 山茂登",
+  genre: "そば",
+  info: "#"
+},
+
+{
+  name: "天ぷら 周平",
+  genre: "そば",
+  info: "#"
+},
+
+{
+  name: "大衆酒場 末広",
+  genre: "居酒屋",
+  info: "#"
+},
+
+{
+  name: "カネノネイロ",
+  genre: "居酒屋",
+  info: "#"
+},
+
+{
+  name: "がしみ屋",
+  genre: "居酒屋",
+  info: "#"
+},
+
+{
+  name: "酒の道",
+  genre: "居酒屋",
+  info: "#"
+},
+
+{
+  name: "太郎 東大宮店",
+  genre: "居酒屋",
+  info: "#"
+},
+
+{
+  name: "かりゆし",
+  genre: "居酒屋",
+  info: "#"
+},
+
+{
+  name: "澄夏",
+  genre: "居酒屋",
+  info: "#"
+},
+
+{
+  name: "居酒屋 かつ木",
+  genre: "居酒屋",
+  info: "#"
+},
+
+{
+  name: "炭火居酒屋 縁",
+  genre: "居酒屋",
+  info: "#"
+},
+
+{
+  name: "ヤキトリバル",
+  genre: "居酒屋",
+  info: "#"
+},
+
+{
+  name: "焼き鳥 鶏処 東大宮",
+  genre: "居酒屋",
+  info: "#"
+},
+
+{
+  name: "わら焼き おもてなし家",
+  genre: "居酒屋",
+  info: "#"
+}
+    
+
+  ];
+
+  // ページ読み込み時にジャンルボタン生成
+  buildChips();
+    // ── チップを動的生成 ──────────────────────────
+    function buildChips() {
+      const genres = ['すべて', ...new Set(allShops.map(s => s.genre))];
+      const container = document.getElementById('genreChips');
+      container.innerHTML = '';
+
+      genres.forEach(genre => {
+        const label = document.createElement('label');
+        // 初期状態：「すべて」だけチェック済み
+        label.className = genre === 'すべて' ? 'chip-label checked' : 'chip-label';
+
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.value = genre;
+        cb.checked = genre === 'すべて';
+
+        label.appendChild(cb);
+        label.appendChild(document.createTextNode(genre));
+
+        label.addEventListener('click', (e) => {
+          e.preventDefault(); // デフォルト動作を止めてJS側で制御
+          selectChip(genre);
+        });
+
+        container.appendChild(label);
+      });
+    }
+
+    // ── チップ選択ロジック ────────────────────────────
+    // ・「すべて」を押す → すべてのみON、個別は全OFF
+    // ・個別ジャンルを押す → すべてをOFF、複数ON/OFF可能（最低1つ残す）
+    function selectChip(genre) {
+      const labels = [...document.querySelectorAll('#genreChips .chip-label')];
+      const allLabel   = labels[0];
+      const allCb      = allLabel.querySelector('input');
+      const itemLabels = labels.slice(1);
+
+      if (genre === 'すべて') {
+        // 「すべて」を押したら個別を全部OFF、すべてのみON
+        allCb.checked = true;
+        allLabel.classList.add('checked');
+        itemLabels.forEach(l => {
+          l.querySelector('input').checked = false;
+          l.classList.remove('checked');
+        });
+      } else {
+        const targetLabel = itemLabels.find(l => l.querySelector('input').value === genre);
+        const targetCb    = targetLabel.querySelector('input');
+        const willCheck   = !targetCb.checked;
+
+        // 外そうとしたとき、他にチェックがなければ無視（最低1つ残す）
+        const otherChecked = itemLabels
+          .filter(l => l.querySelector('input').value !== genre)
+          .some(l => l.querySelector('input').checked);
+        if (!willCheck && !otherChecked) return;
+
+        targetCb.checked = willCheck;
+        targetLabel.classList.toggle('checked', willCheck);
+
+        // 「すべて」は必ずOFF
+        allCb.checked = false;
+        allLabel.classList.remove('checked');
+      }
+    }
+
+    // ── ガチャ本体 ────────────────────────────────
+    function spin() {
+      const labels = [...document.querySelectorAll('#genreChips .chip-label')];
+      const allChecked = labels[0].querySelector('input').checked;
+
+      const selectedGenres = labels.slice(1)
+        .filter(l => l.querySelector('input').checked)
+        .map(l => l.querySelector('input').value);
+
+      const candidates = allChecked || selectedGenres.length === 0
+        ? allShops
+        : allShops.filter(s => selectedGenres.includes(s.genre));
+
+      if (candidates.length === 0) {
+        document.getElementById('result').innerHTML =
+          '<p class="result-empty">該当するお店がありません。<br>ジャンルを選び直してください。</p>';
+        return;
+      }
+
+      const shop = candidates[Math.floor(Math.random() * candidates.length)];
+
+      document.getElementById('result').innerHTML = `
+        <div class="result-shop">
+          <div class="result-genre-badge">${shop.genre}</div>
+          <div class="result-name">${shop.name}</div>
+          <a class="result-link" href="${shop.info}" target="_blank" rel="noopener">
+            お店の情報を見る →
+          </a>
+        </div>
+      `;
+    }
+
+    // ── 掲載店舗一覧 ──────────────────────────────
+    function toggleShopList() {
+      const listDiv = document.getElementById('shopList');
+      const btn     = document.getElementById('listToggleBtn');
+      if (listDiv.style.display === 'none') {
+        let html = '<h3>掲載店舗一覧</h3>';
+        allShops.forEach(shop => {
+          html += `
+            <div class="shop-item">
+              <strong>${shop.name}</strong>
+              <span class="genre-tag">${shop.genre}</span><br>
+              <a href="${shop.info}" target="_blank" rel="noopener">店舗情報を見る →</a>
+            </div>
+          `;
+        });
+        listDiv.innerHTML = html;
+        listDiv.style.display = 'block';
+        btn.textContent = '掲載店舗一覧を閉じる ▲';
+      } else {
+        listDiv.style.display = 'none';
+        btn.textContent = '掲載店舗一覧を見る ▼';
+      }
+    }
+  </script>
+
+
+  <button class="list-toggle-btn" onclick="toggleShopList()" id="listToggleBtn">
+    掲載店舗一覧を見る ▼
+  </button>
+  <div id="shopList" style="display:none;"></div>
+
+</body>
+</html>
+
