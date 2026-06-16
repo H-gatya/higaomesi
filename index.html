@@ -2,6 +2,42 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+    <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XL03M0QSW6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XL03M0QSW6');
+
+    // ── Google アナリティクス イベント ────────────────
+
+    // お店の情報リンクをクリックしたとき
+    function trackShopClick(shopName, genre) {
+      gtag('event', 'shop_info_click', {
+        shop_name: shopName,
+        genre:     genre,
+      });
+    }
+
+    // 掲載店舗一覧の開閉
+    function trackListToggle(isOpen) {
+      gtag('event', 'shop_list_toggle', {
+        action: isOpen ? 'open' : 'close',
+      });
+    }
+
+    // ランキングページへ移動
+    function trackRankingClick() {
+      gtag('event', 'ranking_link_click');
+    }
+
+    // 評価フォームへ移動
+    function trackReviewClick() {
+      gtag('event', 'review_form_click');
+    }
+
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>東大宮グルメガチャ</title>
   <style>
@@ -353,11 +389,8 @@
        target="_blank" rel="noopener">
       <span class="ext-btn-icon">🏆</span>
       <span class="ext-btn-text">
-        みんなの人気ランキングを見る<br>
-        <small>Coming soon</small>
-        <!--
+        みんなの人気ランキングを見る
         <small>ランキングサイトへ移動します</small>
-        -->
       </span>
     </a>
     <a class="ext-btn ext-btn-review"
@@ -370,255 +403,58 @@
       </span>
     </a>
   </div>
-  <!--
   <p class="note">
-    ※ 店舗情報は <code>shops.json</code> で管理しています。<br>
-    お店の追加・修正は JSON ファイルを編集してください。
+    ※ お店の追加・修正は <code>index.html</code> 内の <code>allShops</code> 配列を編集してください。
   </p>
-  -->
 
   <script>
+    // ── 店舗データ（直接埋め込み） ──────────────────
+    // お店を追加・修正する場合はこの配列を編集してください
     const allShops = [
+      { name: "一條苑",                    genre: "焼肉",   info: "https://h-omiya.com/archives/shop/ichijoen" },
+      { name: "らーめんランド壱番館",      genre: "ラーメン", info: "https://h-omiya.com/archives/shop/ichibankan" },
+      { name: "そば処 大菊",               genre: "そば",   info: "https://h-omiya.com/archives/shop/ogiku" },
+      { name: "玄海寿司",                  genre: "寿司",   info: "https://h-omiya.com/archives/shop/genkaizushi" },
+      { name: "インド料理 DURGA",          genre: "カレー", info: "https://h-omiya.com/archives/shop/durga" },
+      { name: "そば処 巴屋",               genre: "そば",   info: "https://h-omiya.com/archives/shop/tomoeya" },
+      { name: "からあげ専門店 鶏笑 東大宮店", genre: "定食", info: "https://h-omiya.com/archives/shop/torisho" },
+      { name: "やきとりや NOKAOI",         genre: "居酒屋", info: "https://h-omiya.com/archives/shop/nokaoi" },
+      { name: "まどいびより 円居日和",     genre: "居酒屋", info: "https://h-omiya.com/archives/shop/madoibiyori" },
+      { name: "狼煙 東大宮店",             genre: "ラーメン", info: "#" },
+      { name: "ぼすや",                    genre: "ラーメン", info: "#" },
+      { name: "屋台ラーメン 北国",         genre: "ラーメン", info: "#" },
+      { name: "麺家 光",                   genre: "ラーメン", info: "#" },
+      { name: "らーめんまこ",              genre: "ラーメン", info: "#" },
+      { name: "一彩",                      genre: "ラーメン", info: "#" },
+      { name: "中華そば 弌",              genre: "ラーメン", info: "#" },
+      { name: "大島飯店",                  genre: "定食",   info: "#" },
+      { name: "食堂シノノメ",              genre: "定食",   info: "#" },
+      { name: "さじや",                    genre: "定食",   info: "#" },
+      { name: "中華笑月",                  genre: "定食",   info: "#" },
+      { name: "まんまんや",                genre: "定食",   info: "#" },
+      { name: "とん次",                    genre: "定食",   info: "#" },
+      { name: "とんでん 東大宮店",         genre: "定食",   info: "#" },
+      { name: "更科",                      genre: "そば",   info: "#" },
+      { name: "あさま",                    genre: "そば",   info: "#" },
+      { name: "そば処 山茂登",             genre: "そば",   info: "#" },
+      { name: "天ぷら 周平",              genre: "そば",   info: "#" },
+      { name: "大衆酒場 末広",             genre: "居酒屋", info: "#" },
+      { name: "カネノネイロ",              genre: "居酒屋", info: "#" },
+      { name: "がしみ屋",                  genre: "居酒屋", info: "#" },
+      { name: "酒の道",                    genre: "居酒屋", info: "#" },
+      { name: "太郎 東大宮店",             genre: "居酒屋", info: "#" },
+      { name: "かりゆし",                  genre: "居酒屋", info: "#" },
+      { name: "澄夏",                      genre: "居酒屋", info: "#" },
+      { name: "居酒屋 かつ木",             genre: "居酒屋", info: "#" },
+      { name: "炭火居酒屋 縁",             genre: "居酒屋", info: "#" },
+      { name: "ヤキトリバル",              genre: "居酒屋", info: "#" },
+      { name: "焼き鳥 鶏処 東大宮",       genre: "居酒屋", info: "#" },
+      { name: "わら焼き おもてなし家",    genre: "居酒屋", info: "#" },
+    ];
 
-    {
-      name: "一條苑",
-      genre: "焼肉",
-      info: "https://h-omiya.com/archives/shop/ichijoen"
-    },
+    // 起動時にチップを生成
+    buildChips();
 
-    {
-      name: "らーめんランド壱番館",
-      genre: "ラーメン",
-      info: "https://h-omiya.com/archives/shop/ichibankan"
-    },
-
-    {
-      name: "そば処 大菊",
-      genre: "そば",
-      info: "https://h-omiya.com/archives/shop/ogiku"
-    },
-
-    {
-      name: "玄海寿司",
-      genre: "寿司",
-      info: "https://h-omiya.com/archives/shop/genkaizushi"
-    },
-
-    {
-      name: "インド料理 DURGA",
-      genre: "カレー",
-      info: "https://h-omiya.com/archives/shop/durga"
-    },
-
-    {
-      name: "そば処 巴屋",
-      genre: "そば",
-      info: "https://h-omiya.com/archives/shop/tomoeya"
-    },
-
-    {
-      name: "からあげ専門店 鶏笑 東大宮店",
-      genre: "定食",
-      info: "https://h-omiya.com/archives/shop/torisho"
-    },
-
-    {
-      name: "やきとりや NOKAOI",
-      genre: "居酒屋",
-      info: "https://h-omiya.com/archives/shop/nokaoi"
-    },
-
-    {
-      name: "まどいびより 円居日和",
-      genre: "居酒屋",
-      info: "https://h-omiya.com/archives/shop/madoibiyori"
-    },
-
-    {
-  name: "狼煙 東大宮店",
-  genre: "ラーメン",
-  info: "#"
-},
-
-{
-  name: "ぼすや",
-  genre: "ラーメン",
-  info: "#"
-},
-
-{
-  name: "屋台ラーメン 北国",
-  genre: "ラーメン",
-  info: "#"
-},
-
-{
-  name: "麺家 光",
-  genre: "ラーメン",
-  info: "#"
-},
-
-{
-  name: "らーめんまこ",
-  genre: "ラーメン",
-  info: "#"
-},
-
-{
-  name: "一彩",
-  genre: "ラーメン",
-  info: "#"
-},
-
-{
-  name: "中華そば 弌",
-  genre: "ラーメン",
-  info: "#"
-},
-
-{
-  name: "大島飯店",
-  genre: "定食",
-  info: "#"
-},
-
-{
-  name: "食堂シノノメ",
-  genre: "定食",
-  info: "#"
-},
-
-{
-  name: "さじや",
-  genre: "定食",
-  info: "#"
-},
-
-{
-  name: "中華笑月",
-  genre: "定食",
-  info: "#"
-},
-
-{
-  name: "まんまんや",
-  genre: "定食",
-  info: "#"
-},
-
-{
-  name: "とん次",
-  genre: "定食",
-  info: "#"
-},
-
-{
-  name: "とんでん　東大宮店",
-  genre: "定食",
-  info: "#"
-},
-
-{
-  name: "更科",
-  genre: "そば",
-  info: "#"
-},
-
-{
-  name: "あさま",
-  genre: "そば",
-  info: "#"
-},
-
-{
-  name: "そば処 山茂登",
-  genre: "そば",
-  info: "#"
-},
-
-{
-  name: "天ぷら 周平",
-  genre: "そば",
-  info: "#"
-},
-
-{
-  name: "大衆酒場 末広",
-  genre: "居酒屋",
-  info: "#"
-},
-
-{
-  name: "カネノネイロ",
-  genre: "居酒屋",
-  info: "#"
-},
-
-{
-  name: "がしみ屋",
-  genre: "居酒屋",
-  info: "#"
-},
-
-{
-  name: "酒の道",
-  genre: "居酒屋",
-  info: "#"
-},
-
-{
-  name: "太郎 東大宮店",
-  genre: "居酒屋",
-  info: "#"
-},
-
-{
-  name: "かりゆし",
-  genre: "居酒屋",
-  info: "#"
-},
-
-{
-  name: "澄夏",
-  genre: "居酒屋",
-  info: "#"
-},
-
-{
-  name: "居酒屋 かつ木",
-  genre: "居酒屋",
-  info: "#"
-},
-
-{
-  name: "炭火居酒屋 縁",
-  genre: "居酒屋",
-  info: "#"
-},
-
-{
-  name: "ヤキトリバル",
-  genre: "居酒屋",
-  info: "#"
-},
-
-{
-  name: "焼き鳥 鶏処 東大宮",
-  genre: "居酒屋",
-  info: "#"
-},
-
-{
-  name: "わら焼き おもてなし家",
-  genre: "居酒屋",
-  info: "#"
-}
-    
-
-  ];
-
-  // ページ読み込み時にジャンルボタン生成
-  buildChips();
     // ── チップを動的生成 ──────────────────────────
     function buildChips() {
       const genres = ['すべて', ...new Set(allShops.map(s => s.genre))];
@@ -709,11 +545,24 @@
         <div class="result-shop">
           <div class="result-genre-badge">${shop.genre}</div>
           <div class="result-name">${shop.name}</div>
-          <a class="result-link" href="${shop.info}" target="_blank" rel="noopener">
+          <a class="result-link"
+             href="${shop.info}"
+             target="_blank"
+             rel="noopener"
+             onclick="trackShopClick('${shop.name}', '${shop.genre}')">
             お店の情報を見る →
           </a>
         </div>
       `;
+
+      // ガチャを回した回数・どのジャンルを選んでいたか
+      gtag('event', 'gacha_spin', {
+        selected_genres: selectedGenres.length === 0 || allChecked
+          ? 'すべて'
+          : selectedGenres.join(','),
+        result_shop:  shop.name,
+        result_genre: shop.genre,
+      });
     }
 
     // ── 掲載店舗一覧 ──────────────────────────────
@@ -734,9 +583,11 @@
         listDiv.innerHTML = html;
         listDiv.style.display = 'block';
         btn.textContent = '掲載店舗一覧を閉じる ▲';
+        trackListToggle(true);
       } else {
         listDiv.style.display = 'none';
         btn.textContent = '掲載店舗一覧を見る ▼';
+        trackListToggle(false);
       }
     }
   </script>
@@ -749,4 +600,3 @@
 
 </body>
 </html>
-
