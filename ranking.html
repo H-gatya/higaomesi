@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>東大宮グルメ ランキング</title>
+  <style>
+    :root {
+      --bg:        #fdf6ee;
+      --surface:   #ffffff;
+      --border:    #e8ddd0;
+      --accent:    #d45f2e;
+      --accent-dk: #b04a1f;
+      --text:      #2a1f14;
+      --muted:     #8a7060;
+      --chip-bg:   #f5ede3;
+      --gold:      #f5a623;
+      --silver:    #a0a0b0;
+      --bronze:    #b87333;
+      --radius-lg: 20px;
+      --radius-md: 12px;
+      --shadow:    0 4px 24px rgba(80,40,10,0.10);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 60px;
+    }
+
+    /* ── header ── */
+    header { text-align: center; margin-bottom: 28px; }
+    .logo-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      padding: 4px 12px;
+      border-radius: 99px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-size: clamp(24px, 6vw, 36px);
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* ── back link ── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* ── tab ── */
+    .tab-bar {
+      display: flex;
+      width: 100%;
+      max-width: 480px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 13px 8px;
+      font-size: 14px;
+      font-weight: 700;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+      transition: background 0.15s, color 0.15s;
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* ── ranking list ── */
+    #rankingList {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .rank-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      animation: fadeUp 0.3s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 1〜3位は左ボーダーに色 */
+    .rank-card.rank-1 { border-left: 4px solid var(--gold); }
+    .rank-card.rank-2 { border-left: 4px solid var(--silver); }
+    .rank-card.rank-3 { border-left: 4px solid var(--bronze); }
+
+    .rank-badge {
+      min-width: 40px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .rank-badge.medal { font-size: 28px; }
+
+    .rank-body { flex: 1; min-width: 0; }
+    .rank-name {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .rank-genre {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--chip-bg);
+      padding: 1px 8px;
+      border-radius: 99px;
+      margin-top: 3px;
+    }
+
+    .rank-score {
+      text-align: right;
+      white-space: nowrap;
+    }
+    .score-main {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.1;
+    }
+    .score-main .unit { font-size: 12px; font-weight: 400; color: var(--muted); }
+    .score-stars {
+      font-size: 14px;
+      color: var(--gold);
+      letter-spacing: -1px;
+    }
+    .score-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── bar ── */
+    .bar-wrap {
+      margin-top: 6px;
+      background: var(--chip-bg);
+      border-radius: 99px;
+      height: 5px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 99px;
+      transition: width 0.6s ease;
+    }
+
+    /* ── info link ── */
+    .rank-link {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .rank-link:hover { text-decoration: underline; }
+
+    /* ── vote CTA ── */
+    .vote-cta {
+      width: 100%;
+      max-width: 480px;
+      margin-top: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .vote-cta p {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .vote-cta a {
+      display: inline-block;
+      background: #27a060;
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 12px 28px;
+      border-radius: var(--radius-md);
+      letter-spacing: 0.04em;
+      transition: opacity 0.15s;
+    }
+    .vote-cta a:hover { opacity: 0.88; }
+
+    /* ── note ── */
+    .note {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 24px;
+      max-width: 480px;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+
+  <a class="back-link" href="./index.html">← ガチャに戻る</a>
+
+  <header>
+    <div class="logo-badge">Higashi-Omiya</div>
+    <h1>🏆 人気ランキング</h1>
+    <p class="subtitle">みんなの評価でお店をランキング</p>
+  </header>
+
+  <!-- タブ切り替え -->
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tabStar"   onclick="switchTab('star')">
+      ⭐ 星評価が高い順
+    </button>
+    <button class="tab-btn"        id="tabVotes"  onclick="switchTab('votes')">
+      🗳️ 投票数が多い順
+    </button>
+  </div>
+
+  <!-- ランキング本体 -->
+  <div id="rankingList"></div>
+
+  <!-- 評価CTA -->
+  <div class="vote-cta">
+    <p>まだ評価していないお店はありませんか？</p>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSefKMQXN9j1wlm4umBPahQE_4LSPQOLNRUbEqxdlFnr-o3wtQ/viewform" target="_blank" rel="noopener">
+      ✍️ お店を評価する
+    </a>
+  </div>
+
+  <!--
+  <p class="note">
+    ※ ランキングの更新は <code>ranking_nojson.html</code> 内の <code>allShops</code> 配列を直接編集してください。<br>
+    星平均 = star_total ÷ star_count　／　投票数 = star_count
+  </p>
+  -->
+
+  <script>
+    // ── 評価データ（直接埋め込み） ──────────────────
+    // Google フォームの回答をもとに star_total・star_count を手動更新してください
+    // 星平均 = star_total ÷ star_count　／　投票数 = star_count
+    const allShops = [
+  { name: "一條苑", genre: "焼肉", info: "https://h-omiya.com/archives/shop/ichijoen", star_total: 0, star_count: 0 },
+
+  { name: "らーめんランド壱番館", genre: "ラーメン", info: "https://h-omiya.com/archives/shop/ichibankan", star_total: 0, star_count: 0 },
+
+  { name: "そば処 大菊", genre: "そば", info: "https://h-omiya.com/archives/shop/ogiku", star_total: 4, star_count: 1 },
+
+  { name: "玄海寿司", genre: "寿司", info: "https://h-omiya.com/archives/shop/genkaizushi", star_total: 0, star_count: 0 },
+
+  { name: "インド料理 DURGA", genre: "カレー", info: "https://h-omiya.com/archives/shop/durga", star_total: 0, star_count: 0 },
+
+  { name: "そば処 巴屋", genre: "そば", info: "https://h-omiya.com/archives/shop/tomoeya", star_total: 0, star_count: 0 },
+
+  { name: "からあげ専門店 鶏笑 東大宮店", genre: "定食", info: "https://h-omiya.com/archives/shop/torisho", star_total: 0, star_count: 0 },
+
+  { name: "やきとりや NOKAOI", genre: "居酒屋", info: "https://h-omiya.com/archives/shop/nokaoi", star_total: 0, star_count: 0 },
+
+  { name: "まどいびより 円居日和", genre: "居酒屋", info: "https://h-omiya.com/archives/shop/madoibiyori", star_total: 0, star_count: 0 },
+
+  { name: "狼煙 東大宮店", genre: "ラーメン", info: "#", star_total: 10, star_count: 2 },
+
+  { name: "ぼすや", genre: "ラーメン", info: "#", star_total: 3, star_count: 1 },
+
+  { name: "屋台ラーメン 北国", genre: "ラーメン", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "麺家 光", genre: "ラーメン", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "らーめんまこ", genre: "ラーメン", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "一彩", genre: "ラーメン", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "中華そば 弌", genre: "ラーメン", info: "#", star_total: 5, star_count: 1 },
+
+  { name: "大島飯店", genre: "定食", info: "#", star_total: 4, star_count: 1 },
+
+  { name: "食堂シノノメ", genre: "定食", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "さじや", genre: "定食", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "中華笑月", genre: "定食", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "まんまんや", genre: "定食", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "とん次", genre: "定食", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "とんでん 東大宮店", genre: "定食", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "更科", genre: "そば", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "あさま", genre: "そば", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "そば処 山茂登", genre: "そば", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "天ぷら 周平", genre: "そば", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "大衆酒場 末広", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "カネノネイロ", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "がしみ屋", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "酒の道", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "太郎 東大宮店", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "かりゆし", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "澄夏", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "居酒屋 かつ木", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "炭火居酒屋 縁", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "ヤキトリバル", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "焼き鳥 鶏処 東大宮", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
+
+  { name: "わら焼き おもてなし家", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 }
+    ];
+
+    let currentTab = 'star';
+
+    // 起動時に描画
+    render();
+
+    // タブ切り替え
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('tabStar') .classList.toggle('active', tab === 'star');
+      document.getElementById('tabVotes').classList.toggle('active', tab === 'votes');
+      render();
+    }
+
+    // 星を文字で生成（★★★☆☆ 形式）
+    function starStr(avg) {
+      const full  = Math.floor(avg);
+      const half  = avg - full >= 0.5 ? 1 : 0;
+      const empty = 5 - full - half;
+      return '★'.repeat(full) + (half ? '✭' : '') + '☆'.repeat(empty);
+    }
+
+    // ランキング描画
+    function render() {
+      const sorted = [...allShops]
+        .map(s => ({
+          ...s,
+          avg: s.star_count > 0
+            ? Math.round((s.star_total / s.star_count) * 10) / 10
+            : 0
+        }))
+        .sort((a, b) =>
+          currentTab === 'star'
+            ? b.avg - a.avg || b.star_count - a.star_count
+            : b.star_count - a.star_count || b.avg - a.avg
+        );
+
+      // バーの最大値
+      const maxStar  = Math.max(...sorted.map(s => s.avg), 5);
+      const maxVotes = Math.max(...sorted.map(s => s.star_count), 1);
+
+      const medals = ['🥇', '🥈', '🥉'];
+
+      const html = sorted.map((shop, i) => {
+        const rank     = i + 1;
+        const isMedal  = rank <= 3;
+        const barPct   = currentTab === 'star'
+          ? (shop.avg / maxStar * 100).toFixed(1)
+          : (shop.star_count / maxVotes * 100).toFixed(1);
+
+        const badgeHtml = isMedal
+          ? `<div class="rank-badge medal">${medals[i]}</div>`
+          : `<div class="rank-badge">${rank}</div>`;
+
+        const scoreMain = currentTab === 'star'
+          ? `<div class="score-main">${shop.avg.toFixed(1)}<span class="unit"> / 5</span></div>
+             <div class="score-stars">${starStr(shop.avg)}</div>
+             <div class="score-sub">${shop.star_count} 票</div>`
+          : `<div class="score-main">${shop.star_count}<span class="unit"> 票</span></div>
+             <div class="score-stars">${starStr(shop.avg)}</div>
+             <div class="score-sub">平均 ${shop.avg.toFixed(1)}</div>`;
+
+        return `
+          <div class="rank-card rank-${rank}" style="animation-delay:${i * 0.05}s">
+            ${badgeHtml}
+            <div class="rank-body">
+              <div class="rank-name">${shop.name}</div>
+              <div class="rank-genre">${shop.genre}</div>
+              <div class="bar-wrap">
+                <div class="bar-fill" style="width:${barPct}%"></div>
+              </div>
+              <a class="rank-link" href="${shop.info}" target="_blank" rel="noopener">
+                店舗情報を見る →
+              </a>
+            </div>
+            <div class="rank-score">${scoreMain}</div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('rankingList').innerHTML = html;
+    }
+  </script>
+
+</body>
+</html>
