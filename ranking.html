@@ -297,83 +297,55 @@
     // Google フォームの回答をもとに star_total・star_count を手動更新してください
     // 星平均 = star_total ÷ star_count　／　投票数 = star_count
     const allShops = [
-  { name: "一條苑", genre: "焼肉", info: "https://h-omiya.com/archives/shop/ichijoen", star_total: 0, star_count: 0 },
-
-  { name: "らーめんランド壱番館", genre: "ラーメン", info: "https://h-omiya.com/archives/shop/ichibankan", star_total: 0, star_count: 0 },
-
-  { name: "そば処 大菊", genre: "そば", info: "https://h-omiya.com/archives/shop/ogiku", star_total: 4, star_count: 1 },
-
-  { name: "玄海寿司", genre: "寿司", info: "https://h-omiya.com/archives/shop/genkaizushi", star_total: 0, star_count: 0 },
-
-  { name: "インド料理 DURGA", genre: "カレー", info: "https://h-omiya.com/archives/shop/durga", star_total: 0, star_count: 0 },
-
-  { name: "そば処 巴屋", genre: "そば", info: "https://h-omiya.com/archives/shop/tomoeya", star_total: 0, star_count: 0 },
-
-  { name: "からあげ専門店 鶏笑 東大宮店", genre: "定食", info: "https://h-omiya.com/archives/shop/torisho", star_total: 0, star_count: 0 },
-
-  { name: "やきとりや NOKAOI", genre: "居酒屋", info: "https://h-omiya.com/archives/shop/nokaoi", star_total: 0, star_count: 0 },
-
-  { name: "まどいびより 円居日和", genre: "居酒屋", info: "https://h-omiya.com/archives/shop/madoibiyori", star_total: 0, star_count: 0 },
-
-  { name: "狼煙 東大宮店", genre: "ラーメン", info: "#", star_total: 10, star_count: 2 },
-
-  { name: "ぼすや", genre: "ラーメン", info: "#", star_total: 3, star_count: 1 },
-
-  { name: "屋台ラーメン 北国", genre: "ラーメン", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "麺家 光", genre: "ラーメン", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "らーめんまこ", genre: "ラーメン", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "一彩", genre: "ラーメン", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "中華そば 弌", genre: "ラーメン", info: "#", star_total: 5, star_count: 1 },
-
-  { name: "大島飯店", genre: "定食", info: "#", star_total: 4, star_count: 1 },
-
-  { name: "食堂シノノメ", genre: "定食", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "さじや", genre: "定食", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "中華笑月", genre: "定食", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "まんまんや", genre: "定食", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "とん次", genre: "定食", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "とんでん 東大宮店", genre: "定食", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "更科", genre: "そば", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "あさま", genre: "そば", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "そば処 山茂登", genre: "そば", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "天ぷら 周平", genre: "そば", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "大衆酒場 末広", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "カネノネイロ", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "がしみ屋", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "酒の道", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "太郎 東大宮店", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "かりゆし", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "澄夏", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "居酒屋 かつ木", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "炭火居酒屋 縁", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "ヤキトリバル", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "焼き鳥 鶏処 東大宮", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 },
-
-  { name: "わら焼き おもてなし家", genre: "居酒屋", info: "#", star_total: 0, star_count: 0 }
+      { name: "一條苑", genre: "焼肉", info: "https://h-omiya.com/archives/shop/ichijoen", star_total: 0, star_count: 0 },
+{ name: "らーめんランド壱番館", genre: "ラーメン", info: "https://h-omiya.com/archives/shop/ichibankan", star_total: 0, star_count: 0 },
+{ name: "そば処 大菊", genre: "そば", info: "https://h-omiya.com/archives/shop/ogiku", star_total: 4, star_count: 1 },
+{ name: "玄海寿司", genre: "寿司", info: "https://h-omiya.com/archives/shop/genkaizushi", star_total: 0, star_count: 0 },
+{ name: "インド料理 DURGA", genre: "カレー", info: "https://h-omiya.com/archives/shop/durga", star_total: 0, star_count: 0 },
+{ name: "そば処 巴屋", genre: "そば", info: "https://h-omiya.com/archives/shop/tomoeya", star_total: 0, star_count: 0 },
+{ name: "からあげ専門店 鶏笑 東大宮店", genre: "定食", info: "https://h-omiya.com/archives/shop/torisho", star_total: 0, star_count: 0 },
+{ name: "やきとりや NOKAOI", genre: "居酒屋", info: "https://h-omiya.com/archives/shop/nokaoi", star_total: 0, star_count: 0 },
+{ name: "まどいびより 円居日和", genre: "居酒屋", info: "https://h-omiya.com/archives/shop/madoibiyori", star_total: 0, star_count: 0 },
+{ name: "狼煙 東大宮店", genre: "ラーメン", info: "https://maps.app.goo.gl/QuPfKyDEZcXKjhr78", star_total: 15, star_count: 3 },
+{ name: "ぼすや", genre: "ラーメン", info: "https://maps.app.goo.gl/FnjhykEVJLipNg4w7", star_total: 3, star_count: 1 },
+{ name: "屋台ラーメン 北国", genre: "ラーメン", info: "https://maps.app.goo.gl/RvoZ4bhybsptyqjn8", star_total: 0, star_count: 0 },
+{ name: "麺家 光", genre: "ラーメン", info: "https://maps.app.goo.gl/annpx2Rdvc415vPq8", star_total: 0, star_count: 0 },
+{ name: "らーめんまこ", genre: "ラーメン", info: "https://maps.app.goo.gl/iqQDKoym2t7F8T4a8", star_total: 0, star_count: 0 },
+{ name: "一彩", genre: "ラーメン", info: "https://maps.app.goo.gl/aAzvh7NG3ZUaDYUD6", star_total: 0, star_count: 0 },
+{ name: "中華そば 弌", genre: "ラーメン", info: "https://maps.app.goo.gl/95CobVBJPuA8RB199", star_total: 10, star_count: 2 },
+{ name: "大島飯店", genre: "中華", info: "https://maps.app.goo.gl/KWN1R7rrtQycc4w86", star_total: 4, star_count: 1 },
+{ name: "食堂シノノメ", genre: "定食", info: "https://maps.app.goo.gl/2bXgvCwQzmEzTFha7", star_total: 0, star_count: 0 },
+{ name: "さじや", genre: "定食", info: "https://maps.app.goo.gl/muncCDyWX3dGPwMe9", star_total: 0, star_count: 0 },
+{ name: "中華笑月", genre: "中華", info: "https://maps.app.goo.gl/gdeW8kiJZJ8vGTN98", star_total: 0, star_count: 0 },
+{ name: "まんまんや", genre: "中華", info: "https://maps.app.goo.gl/2kmWHeFHuSXAvFKZ6", star_total: 0, star_count: 0 },
+{ name: "とん次", genre: "定食", info: "https://maps.app.goo.gl/a69ZUEEnERZmhYpE6", star_total: 0, star_count: 0 },
+{ name: "とんでん 東大宮店", genre: "定食", info: "https://maps.app.goo.gl/y18cdrHjzaFjk14i6", star_total: 0, star_count: 0 },
+{ name: "更科", genre: "そば", info: "https://maps.app.goo.gl/FmHKV4RAcA3sbCRN8", star_total: 0, star_count: 0 },
+{ name: "あさま", genre: "そば", info: "https://maps.app.goo.gl/LSSStjhhCuTkbj6W7", star_total: 0, star_count: 0 },
+{ name: "そば処 山茂登", genre: "そば", info: "https://maps.app.goo.gl/S9omKW73mbhLTcLS9", star_total: 0, star_count: 0 },
+{ name: "天ぷら 周平", genre: "そば", info: "https://maps.app.goo.gl/aCnuSfeX6jBa3j5U6", star_total: 0, star_count: 0 },
+{ name: "大衆酒場 末広", genre: "居酒屋", info: "https://maps.app.goo.gl/NFXVCyLxMtzkcH1p6", star_total: 0, star_count: 0 },
+{ name: "カネノネイロ", genre: "居酒屋", info: "https://maps.app.goo.gl/XVb8RX1pDkfMDepc7", star_total: 0, star_count: 0 },
+{ name: "がしみ屋", genre: "居酒屋", info: "https://maps.app.goo.gl/QraUyRJ46pzGAAyU7", star_total: 0, star_count: 0 },
+{ name: "酒の道", genre: "居酒屋", info: "https://maps.app.goo.gl/qsfcFu15h2jwmiDS7", star_total: 0, star_count: 0 },
+{ name: "太郎 東大宮店", genre: "居酒屋", info: "https://maps.app.goo.gl/Log8wSSZXJiv1eLx7", star_total: 0, star_count: 0 },
+{ name: "かりゆし", genre: "居酒屋", info: "https://maps.app.goo.gl/Ss6xYcxe3qyXhNCr6", star_total: 0, star_count: 0 },
+{ name: "澄夏", genre: "居酒屋", info: "https://maps.app.goo.gl/F8HLgo615SWcEexH8", star_total: 0, star_count: 0 },
+{ name: "居酒屋 かつ木", genre: "居酒屋", info: "https://maps.app.goo.gl/rpwaEfgSPfPzCt3q6", star_total: 0, star_count: 0 },
+{ name: "炭火居酒屋 縁", genre: "居酒屋", info: "https://maps.app.goo.gl/B5J2vtjxdbFQfx24A", star_total: 0, star_count: 0 },
+{ name: "ヤキトリバル", genre: "居酒屋", info: "https://maps.app.goo.gl/bYDKbtqKNv37pu7R7", star_total: 0, star_count: 0 },
+{ name: "焼き鳥 鶏処 東大宮", genre: "居酒屋", info: "https://maps.app.goo.gl/itEGRuwpW2poxndM9", star_total: 0, star_count: 0 },
+{ name: "わら焼き おもてなし家", genre: "居酒屋", info: "https://maps.app.goo.gl/NMCP1cm5WNyoye3f8", star_total: 0, star_count: 0 },
+{ name: "麺飯菜館じょうじょう", genre: "中華", info: "https://maps.app.goo.gl/AcxTSfXCJSWo9J1s9", star_total: 0, star_count: 0 },
+{ name: "バッボ", genre: "居酒屋", info: "https://maps.app.goo.gl/sWiDjynuQuxMyy6F7", star_total: 0, star_count: 0 },
+{ name: "和inaRia", genre: "居酒屋", info: "https://maps.app.goo.gl/3w5YE27VJGwArvHF9", star_total: 0, star_count: 0 },
+{ name: "Osteria ZEN", genre: "レストラン", info: "https://maps.app.goo.gl/bCEioCtPe9oPkhgL6", star_total: 0, star_count: 0 },
+{ name: "個室完備大衆とり酒場 とりいちず東大宮東口店", genre: "居酒屋", info: "https://maps.app.goo.gl/XeayBX6ohoVdn5UUA", star_total: 0, star_count: 0 },
+{ name: "和み家 梟", genre: "定食", info: "https://maps.app.goo.gl/quTGpyc8Zd9JHkjS8", star_total: 0, star_count: 0 },
+{ name: "本格炭火串焼 一途一心 「一」 はじめ 東大宮店", genre: "居酒屋", info: "https://maps.app.goo.gl/DDzAoMQh9K47Dg9n9", star_total: 0, star_count: 0 },
+{ name: "しゃぶ葉 東大宮店", genre: "レストラン", info: "https://maps.app.goo.gl/temttgBquBczJJcVA", star_total: 0, star_count: 0 },
+{ name: "サイゼリヤ 東大宮店", genre: "レストラン", info: "https://maps.app.goo.gl/oMqVDXSSrfNGFq4g6", star_total: 0, star_count: 0 },
+{ name: "Private Dinning ゆがふ島", genre: "居酒屋", info: "https://maps.app.goo.gl/HyA1qqrkHT5KDDyF7", star_total: 0, star_count: 0 }
     ];
 
     let currentTab = 'star';
